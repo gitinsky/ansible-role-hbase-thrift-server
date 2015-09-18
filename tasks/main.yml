@@ -1,6 +1,6 @@
 ---
 - name: put thrift server eye config file
-  template: src=hbase/thrift.rb dest=/etc/eye/thrift-server.rb owner=root group=root mode=0644
+  template: src=hbase/thrift.rb dest=/etc/eye/thrift-server-{{ env_name }}.rb owner=root group=root mode=0644
 
 - name: load config in eye
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
