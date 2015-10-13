@@ -7,5 +7,5 @@
   sudo: yes
 
 - name: restart when hbase-site.xml changed
-  command: bash -c "source /usr/local/rvm/scripts/rvm && eye restart thrift-server"
+  command: bash -c "source /usr/local/rvm/scripts/rvm && eye restart hbase-thrift-server-{{ env_name }}"
   when: hbase_site_xml is defined and hbase_site_xml.changed
