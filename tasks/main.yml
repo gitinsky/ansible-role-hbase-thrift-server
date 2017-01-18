@@ -1,11 +1,24 @@
 ---
 - name: put thrift server eye config file
   template: src=hbase/thrift.rb dest=/etc/eye/thrift-server-{{ env_name }}.rb owner=root group=root mode=0644
+  when: "not (ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04')"
 
 - name: load config in eye
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
   sudo: yes
+  when: "not (ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04')"
 
 - name: restart when hbase-site.xml changed
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye restart hbase-thrift-server-{{ env_name }}"
-  when: hbase_site_xml is defined and hbase_site_xml.changed
+  when: "hbase_site_xml is defined and hbase_site_xml.changed and (not (ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'))"
+
+- name: put systemd unit file to its destination
+  template: src=hbase-thriftserver.service dest=/etc/systemd/system/hbase-thriftserver-{{ env_name }}.service owner=root group=root mode=0644
+  when: "ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'"
+  notify: systemctl daemon-reload
+
+- meta: flush_handlers
+
+- name: enable hbase-thriftserver service
+  service: name=hbase-thriftserver-{{ env_name }} enabled=yes state=started
+  when: "ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'"
