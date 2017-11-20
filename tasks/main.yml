@@ -5,7 +5,7 @@
 
 - name: load config in eye
   command: bash -c "source /usr/local/rvm/scripts/rvm && eye l /etc/eye/apps.eye"
-  sudo: yes
+  become: yes
   when: "not (ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04')"
 
 - name: restart when hbase-site.xml changed
